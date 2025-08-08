@@ -12,11 +12,12 @@ function validateSignupInput(input: SignUpRequest): void {
     if (!input.email.match(/^(.+)@(.+)$/)) throw new Error("Invalid email");
     if (!input.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/)) throw new Error("Invalid password");
     if (!validateCpf(input.cpf)) throw new Error("Invalid CPF");
-    if (input.isDriver && (!input.carPlate?.match(/[A-Z]{3}[0-9]{4}/))) throw new Error("Invalid car plate");
+    if (input.isDriver && !(input.carPlate?.match(/[A-Z]{3}[0-9]{4}/))) throw new Error("Invalid car plate");
 }
 
+const database = new AccountDAODatabase();
+
 app.post("/signup", async function (req, res) {
-    const database = new AccountDAODatabase();
     const input = req.body as SignUpRequest;
     try {
         validateSignupInput(input);
@@ -38,13 +39,13 @@ app.post("/signup", async function (req, res) {
         };
         res.status(201).json(responseObject);
     } catch (e: any) {
-        return res.status(400).json({error: e.message});
+        console.error(e.message);
+        return res.status(422).json({error: e.message});
     }
 
 });
 
 app.get("/accounts/:accountId", async function (req, res) {
-    const database = new AccountDAODatabase();
     const accountId = req.params.accountId;
     const output = await database.getAccountById(accountId);
     res.json(output);
