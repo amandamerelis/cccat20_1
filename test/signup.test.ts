@@ -1,13 +1,15 @@
-//para se inscrever vai nome, email, account_id, cpf, placa do carro, bool é passageiro, bool é motorista, senha
-//email n pode ser repetido
-//nome só pode ter letras e deve ser nome e sobrenome
-//email tem que ter o @
-//id, name, email, cpf, carPlate, !!isPassenger, !!isDriver, password
-import axios from 'axios';
+import {AccountDAODatabase} from "../src/data";
+import SignUp from "../src/signup";
+import GetAccount from "../src/getAccount";
 
-axios.defaults.validateStatus = function () {
-    return true; //trata todas as respostas http como sucesso, independente do status
-}
+let signup: SignUp;
+let getAccount: GetAccount;
+
+beforeEach(() => {
+    const database = new AccountDAODatabase();
+    signup = new SignUp(database);
+    getAccount = new GetAccount(database);
+});
 
 test("Deve aprovar o cadastro de passageiro", async function () {
     const input = {
@@ -17,17 +19,14 @@ test("Deve aprovar o cadastro de passageiro", async function () {
         password: "asdQWE123",
         isPassenger: true
     };
-    const result = await axios.post("http://localhost:3000/signup", input);
-    expect(result.status).toBe(201);
-    const newAccount = result.data;
-    expect(newAccount.accountId).toBeDefined();
-    const output = await axios.get(`http://localhost:3000/accounts/${newAccount.accountId}`);
-    const account = output.data;
-    expect(account.name).toBe(input.name);
-    expect(account.email).toBe(input.email);
-    expect(account.cpf).toBe(input.cpf);
-    expect(account.is_passenger).toBe(input.isPassenger);
-    expect(account.password).toBe(input.password);
+    const resultSignup = await signup.execute(input);
+    expect(resultSignup.accountId).toBeDefined();
+    const resultGetAccount = await getAccount.getById(resultSignup.accountId);
+    expect(resultGetAccount.name).toBe(input.name);
+    expect(resultGetAccount.email).toBe(input.email);
+    expect(resultGetAccount.cpf).toBe(input.cpf);
+    expect(resultGetAccount.is_passenger).toBe(input.isPassenger);
+    expect(resultGetAccount.password).toBe(input.password);
 });
 
 test("Deve aprovar o cadastro de motorista", async function () {
@@ -40,18 +39,16 @@ test("Deve aprovar o cadastro de motorista", async function () {
         isDriver: true,
         carPlate: "ABC1234"
     };
-    const result = await axios.post("http://localhost:3000/signup", input);
-    expect(result.status).toBe(201);
-    const newAccount = result.data;
-    expect(newAccount.accountId).toBeDefined();
-    const output = await axios.get(`http://localhost:3000/accounts/${newAccount.accountId}`);
-    const account = output.data;
-    expect(account.name).toBe(input.name);
-    expect(account.email).toBe(input.email);
-    expect(account.cpf).toBe(input.cpf);
-    expect(account.password).toBe(input.password);
-    expect(account.is_driver).toBe(input.isDriver);
-    expect(account.car_plate).toBe(input.carPlate);
+    const resultSignup = await signup.execute(input);
+    expect(resultSignup.accountId).toBeDefined();
+    const resultGetAccount = await getAccount.getById(resultSignup.accountId);
+    expect(resultGetAccount.name).toBe(input.name);
+    expect(resultGetAccount.email).toBe(input.email);
+    expect(resultGetAccount.cpf).toBe(input.cpf);
+    expect(resultGetAccount.is_passenger).toBe(input.isPassenger);
+    expect(resultGetAccount.password).toBe(input.password);
+    expect(resultGetAccount.is_driver).toBe(input.isDriver);
+    expect(resultGetAccount.car_plate).toBe(input.carPlate);
 });
 
 test("Deve dar email inválido", async function () {
@@ -62,9 +59,7 @@ test("Deve dar email inválido", async function () {
         password: "asdQWE123",
         isPassenger: true
     };
-    const result = await axios.post("http://localhost:3000/signup", input);
-    expect(result.status).toBe(422);
-    expect(result.data.error).toBe("Invalid email");
+    await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid email"));
 });
 
 test("Deve dar senha inválida", async function () {
@@ -75,9 +70,8 @@ test("Deve dar senha inválida", async function () {
         password: "12345678",
         isPassenger: true
     };
-    const result = await axios.post("http://localhost:3000/signup", input);
-    expect(result.status).toBe(422);
-    expect(result.data.error).toBe("Invalid password");
+    await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid password"));
+
 });
 
 test("Deve dar cpf inválido", async function () {
@@ -88,9 +82,7 @@ test("Deve dar cpf inválido", async function () {
         password: "asdQWE123",
         isPassenger: true
     };
-    const result = await axios.post("http://localhost:3000/signup", input);
-    expect(result.status).toBe(422);
-    expect(result.data.error).toBe("Invalid CPF");
+    await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid CPF"));
 });
 
 test("Deve dar conta já existente", async function () {
@@ -103,10 +95,8 @@ test("Deve dar conta já existente", async function () {
         isDriver: true,
         carPlate: "ABC1234"
     };
-    const firstResult = await axios.post("http://localhost:3000/signup", input);
-    const secondResult = await axios.post("http://localhost:3000/signup", input);
-    expect(secondResult.status).toBe(422);
-    expect(secondResult.data.error).toBe("Account already exists");
+    await signup.execute(input);
+    await expect(() => signup.execute(input)).rejects.toThrow(new Error("Account already exists"));
 });
 
 
