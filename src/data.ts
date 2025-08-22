@@ -29,3 +29,21 @@ export class AccountDAODatabase implements AccountDAO {
     }
 
 }
+
+export class AccountDAOMemory implements AccountDAO {
+    accounts: any[] = [];
+
+    getAccountByEmail(email: string): Promise<any> {
+        return this.accounts.find(account => account.email === email);
+    }
+
+    getAccountById(accountId: string): Promise<any> {
+        return this.accounts.find(account => account.accountId === accountId);
+    }
+
+    saveAccount(account: any): Promise<void> {
+        this.accounts.push(account);
+        return Promise.resolve();
+    }
+
+}

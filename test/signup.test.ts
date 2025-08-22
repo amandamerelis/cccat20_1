@@ -1,12 +1,13 @@
-import {AccountDAODatabase} from "../src/data";
+import {AccountDAODatabase, AccountDAOMemory} from "../src/data";
 import SignUp from "../src/signup";
 import GetAccount from "../src/getAccount";
+import sinon from "sinon";
 
 let signup: SignUp;
 let getAccount: GetAccount;
 
 beforeEach(() => {
-    const database = new AccountDAODatabase();
+    const database = new AccountDAOMemory();
     signup = new SignUp(database);
     getAccount = new GetAccount(database);
 });
@@ -25,7 +26,7 @@ test("Deve aprovar o cadastro de passageiro", async function () {
     expect(resultGetAccount.name).toBe(input.name);
     expect(resultGetAccount.email).toBe(input.email);
     expect(resultGetAccount.cpf).toBe(input.cpf);
-    expect(resultGetAccount.is_passenger).toBe(input.isPassenger);
+    expect(resultGetAccount.isPassenger).toBe(input.isPassenger);
     expect(resultGetAccount.password).toBe(input.password);
 });
 
@@ -45,10 +46,10 @@ test("Deve aprovar o cadastro de motorista", async function () {
     expect(resultGetAccount.name).toBe(input.name);
     expect(resultGetAccount.email).toBe(input.email);
     expect(resultGetAccount.cpf).toBe(input.cpf);
-    expect(resultGetAccount.is_passenger).toBe(input.isPassenger);
+    expect(resultGetAccount.isPassenger).toBe(input.isPassenger);
     expect(resultGetAccount.password).toBe(input.password);
-    expect(resultGetAccount.is_driver).toBe(input.isDriver);
-    expect(resultGetAccount.car_plate).toBe(input.carPlate);
+    expect(resultGetAccount.isDriver).toBe(input.isDriver);
+    expect(resultGetAccount.carPlate).toBe(input.carPlate);
 });
 
 test("Deve dar email inválido", async function () {
@@ -100,4 +101,72 @@ test("Deve dar conta já existente", async function () {
 });
 
 
+//Test pattern com stub
+test("Deve aprovar o cadastro de passageiro com stub", async function () {
+    const input = {
+        name: "Jane Doe",
+        email: `janedoe${Math.random()}@gmail.com`,
+        cpf: "97456321558",
+        password: "asdQWE123",
+        isPassenger: true
+    };
+    const saveAccountStub = sinon.stub(AccountDAODatabase.prototype, "saveAccount").resolves();
+    const getAccountByEmailStub = sinon.stub(AccountDAODatabase.prototype, "getAccountByEmail").resolves();
+    const getAccountByIdStub = sinon.stub(AccountDAODatabase.prototype, "getAccountById").resolves(input);
+    const resultSignup = await signup.execute(input);
+    expect(resultSignup.accountId).toBeDefined();
+    const resultGetAccount = await getAccount.getById(resultSignup.accountId);
+    expect(resultGetAccount.name).toBe(input.name);
+    expect(resultGetAccount.email).toBe(input.email);
+    expect(resultGetAccount.cpf).toBe(input.cpf);
+    expect(resultGetAccount.isPassenger).toBe(input.isPassenger);
+    expect(resultGetAccount.password).toBe(input.password);
+    saveAccountStub.restore();
+    getAccountByEmailStub.restore();
+    getAccountByIdStub.restore();
+});
 
+test("Deve aprovar o cadastro de passageiro com spy", async function () {
+    const input = {
+        name: "Jane Doe",
+        email: `janedoe${Math.random()}@gmail.com`,
+        cpf: "97456321558",
+        password: "asdQWE123",
+        isPassenger: true
+    };
+    const saveAccountSpy = sinon.spy(AccountDAOMemory.prototype, "saveAccount");
+    const getAccountSpy = sinon.spy(AccountDAOMemory.prototype, "getAccountById");
+    const resultSignup = await signup.execute(input);
+    expect(saveAccountSpy.calledOnce).toBe(true);
+    const resultGetAccount = await getAccount.getById(resultSignup.accountId);
+    expect(getAccountSpy.calledWith(resultSignup.accountId)).toBe(true);
+    expect(resultGetAccount.name).toBe(input.name);
+    expect(resultGetAccount.email).toBe(input.email);
+    expect(resultGetAccount.cpf).toBe(input.cpf);
+    expect(resultGetAccount.isPassenger).toBe(input.isPassenger);
+    expect(resultGetAccount.password).toBe(input.password);
+    saveAccountSpy.restore();
+    getAccountSpy.restore();
+});
+
+test("Deve aprovar o cadastro de passageiro com mock", async function () {
+    const input = {
+        name: "Jane Doe",
+        email: `janedoe${Math.random()}@gmail.com`,
+        cpf: "97456321558",
+        password: "asdQWE123",
+        isPassenger: true
+    };
+    const accountDAOMock = sinon.mock(AccountDAOMemory.prototype);
+    accountDAOMock.expects("saveAccount").once().resolves();
+    accountDAOMock.expects("getAccountByEmail").once().resolves();
+    const resultSignup = await signup.execute(input);
+    accountDAOMock.expects("getAccountById").once().withArgs(resultSignup.accountId).resolves(input);
+    const resultGetAccount = await getAccount.getById(resultSignup.accountId);
+    expect(resultGetAccount.name).toBe(input.name);
+    expect(resultGetAccount.email).toBe(input.email);
+    expect(resultGetAccount.cpf).toBe(input.cpf);
+    expect(resultGetAccount.isPassenger).toBe(input.isPassenger);
+    expect(resultGetAccount.password).toBe(input.password);
+    accountDAOMock.restore();
+});
