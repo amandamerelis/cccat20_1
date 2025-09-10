@@ -1,13 +1,18 @@
 import SignUp from "../src/signup";
-import {AccountDAOMemory, RideDAODatabase} from "../src/data";
 import RequestRide from "../src/requestRide";
 import GetRide from "../src/getRide";
+import Registry from "../src/Registry";
+import {AccountDAOMemory, RideDAODatabase} from "../src/data";
 
 let signup: SignUp;
 let requestRide: RequestRide;
 let getRide: GetRide;
 
 beforeEach(() => {
+    const accountDAO = new AccountDAOMemory();
+    const rideDAO = new RideDAODatabase();
+    Registry.getInstance().provide("accountDAO", accountDAO);
+    Registry.getInstance().provide("rideDAO", rideDAO);
     signup = new SignUp();
     requestRide = new RequestRide();
     getRide = new GetRide();
@@ -24,17 +29,19 @@ test("Deve criar a corrida", async function () {
     const savePassengerResult = await signup.execute(passenger);
     const rideInput = {
         passengerId: savePassengerResult.accountId,
-        from: {lat: 12, long: 500},
-        to: {lat: 60, long: 600},
+        fromLat: -27.584905257808835,
+        fromLong: -48.545022195325124,
+        toLat: -27.496887588317275,
+        toLong: -48.522234807851476
     };
     const saveRideResult = await requestRide.execute(rideInput);
     expect(saveRideResult.rideId).toBeDefined();
     const outputGetRide = await getRide.getRideById(saveRideResult.rideId);
     expect(outputGetRide.status).toBe("requested");
-    expect(outputGetRide.from_lat).toBe(rideInput.from.lat.toString());
-    expect(outputGetRide.from_long).toBe(rideInput.from.long.toString());
-    expect(outputGetRide.to_lat).toBe(rideInput.to.lat.toString());
-    expect(outputGetRide.to_long).toBe(rideInput.to.long.toString());
+    expect(outputGetRide.fromLat).toBe(rideInput.fromLat);
+    expect(outputGetRide.fromLong).toBe(rideInput.fromLong);
+    expect(outputGetRide.toLat).toBe(rideInput.toLat);
+    expect(outputGetRide.toLong).toBe(rideInput.toLong);
     expect(outputGetRide.date).toBeDefined();
 })
 
@@ -49,8 +56,10 @@ test("Deve dar erro ao criar corrida: usuário não é passageiro", async functi
     const savePassengerResult = await signup.execute(passenger);
     const rideInput = {
         passengerId: savePassengerResult.accountId,
-        from: {lat: 12, long: 500},
-        to: {lat: 60, long: 600},
+        fromLat: -27.584905257808835,
+        fromLong: -48.545022195325124,
+        toLat: -27.496887588317275,
+        toLong: -48.522234807851476
     };
     await expect(() => requestRide.execute(rideInput)).rejects.toThrow(new Error("User is not a passenger"));
 })
@@ -66,8 +75,10 @@ test("Deve dar erro ao criar corrida: usuário possui corrida em andamento", asy
     const savePassengerResult = await signup.execute(passenger);
     const rideInput = {
         passengerId: savePassengerResult.accountId,
-        from: {lat: 12, long: 500},
-        to: {lat: 60, long: 600},
+        fromLat: -27.584905257808835,
+        fromLong: -48.545022195325124,
+        toLat: -27.496887588317275,
+        toLong: -48.522234807851476
     };
     await requestRide.execute(rideInput);
     await expect(() => requestRide.execute(rideInput)).rejects.toThrow(new Error("Passenger already has a ride in progress"));

@@ -2,11 +2,14 @@ import {AccountDAODatabase, AccountDAOMemory} from "../src/data";
 import SignUp from "../src/signup";
 import GetAccount from "../src/getAccount";
 import sinon from "sinon";
+import Registry from "../src/Registry";
 
 let signup: SignUp;
 let getAccount: GetAccount;
 
 beforeEach(() => {
+    const accountDAO = new AccountDAOMemory();
+    Registry.getInstance().provide("accountDAO", accountDAO);
     signup = new SignUp();
     getAccount = new GetAccount();
 });
