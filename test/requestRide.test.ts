@@ -83,3 +83,41 @@ test("Deve dar erro ao criar corrida: usuário possui corrida em andamento", asy
     await requestRide.execute(rideInput);
     await expect(() => requestRide.execute(rideInput)).rejects.toThrow(new Error("Passenger already has a ride in progress"));
 })
+
+test("Deve dar erro ao criar corrida: latitude inválida", async function () {
+    const passenger = {
+        name: "Jane Doe",
+        email: `janedoe${Math.random()}@gmail.com`,
+        cpf: "97456321558",
+        password: "asdQWE123",
+        isPassenger: true
+    }
+    const savePassengerResult = await signup.execute(passenger);
+    const rideInput = {
+        passengerId: savePassengerResult.accountId,
+        fromLat: -93,
+        fromLong: -48.545022195325124,
+        toLat: -27.496887588317275,
+        toLong: -48.522234807851476
+    };
+    await expect(() => requestRide.execute(rideInput)).rejects.toThrow(new Error("The latitude is invalid"));
+})
+
+test("Deve dar erro ao criar corrida: longitude inválida", async function () {
+    const passenger = {
+        name: "Jane Doe",
+        email: `janedoe${Math.random()}@gmail.com`,
+        cpf: "97456321558",
+        password: "asdQWE123",
+        isPassenger: true
+    }
+    const savePassengerResult = await signup.execute(passenger);
+    const rideInput = {
+        passengerId: savePassengerResult.accountId,
+        fromLat: -90,
+        fromLong: -48.545022195325124,
+        toLat: -27.496887588317275,
+        toLong: -248.522234807851476
+    };
+    await expect(() => requestRide.execute(rideInput)).rejects.toThrow(new Error("The longitude is invalid"));
+})

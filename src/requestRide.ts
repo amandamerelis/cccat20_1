@@ -32,6 +32,10 @@ export default class RequestRide {
         const passenger = await this.accountDatabase.getAccountById(input.passengerId);
         if (!passenger) throw new Error("Passenger not found");
         if (!passenger.isPassenger) throw new Error("User is not a passenger");
+        if(input.fromLat < -90 || input.fromLat > 90) throw new Error("The latitude is invalid")
+        if(input.toLat < -90 || input.toLat > 90) throw new Error("The latitude is invalid")
+        if(input.fromLong < -180 || input.fromLong > 180) throw new Error("The longitude is invalid")
+        if(input.toLong < -180 || input.toLong > 180) throw new Error("The longitude is invalid")
         const ongoingRide = await this.rideDatabase.existsOngoingRideForPassenger(passenger.accountId);
         if (ongoingRide) {
             throw new Error("Passenger already has a ride in progress");
