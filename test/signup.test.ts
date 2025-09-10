@@ -7,9 +7,8 @@ let signup: SignUp;
 let getAccount: GetAccount;
 
 beforeEach(() => {
-    const database = new AccountDAOMemory();
-    signup = new SignUp(database);
-    getAccount = new GetAccount(database);
+    signup = new SignUp();
+    getAccount = new GetAccount();
 });
 
 test("Deve aprovar o cadastro de passageiro", async function () {

@@ -2,15 +2,19 @@ import crypto from "crypto";
 import {validateCpf} from "./validateCpf";
 import {SignUpRequest} from './types/SignUpRequest';
 import {AccountDAO} from "./data";
+import {inject} from "./Registry";
 
 export default class SignUp {
 
-    constructor(private readonly database: AccountDAO) {
+    @inject("accountDAO")
+    accountDAO!: AccountDAO;
+
+    constructor() {
     }
 
     async execute(input: SignUpRequest) {
         this.validateSignupInput(input);
-        const existingAccount = await this.database.getAccountByEmail(input.email);
+        const existingAccount = await this.accountDAO.getAccountByEmail(input.email);
         if (existingAccount) throw new Error("Account already exists");
         const newAccount = {
             accountId: crypto.randomUUID(),
@@ -22,7 +26,7 @@ export default class SignUp {
             isDriver: input.isDriver,
             password: input.password,
         };
-        await this.database.saveAccount(newAccount);
+        await this.accountDAO.saveAccount(newAccount);
         return {
             accountId: newAccount.accountId
         };

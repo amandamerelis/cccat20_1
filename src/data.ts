@@ -6,6 +6,12 @@ export interface AccountDAO {
     saveAccount: (account: any) => Promise<void>;
 }
 
+export interface RideDAO {
+    existsOngoingRideForPassenger: (passengerId: string) => Promise<boolean>;
+    getRideById: (rideId: string) => Promise<any>;
+    saveRide: (ride: any) => Promise<void>;
+}
+
 export class AccountDAODatabase implements AccountDAO {
 
     async getAccountByEmail(email: string): Promise<any> {
@@ -46,4 +52,30 @@ export class AccountDAOMemory implements AccountDAO {
         return Promise.resolve();
     }
 
+}
+
+export class RideDAODatabase implements RideDAO {
+
+    async existsOngoingRideForPassenger(passengerId: string): Promise<any> {
+        const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
+        const [{ has_ongoing }] = await connection.query(
+            "select exists (select 1 from ccca.ride r where r.passenger_id = $1 and r.status <> 'completed') as has_ongoing",
+            [passengerId]
+        );
+        await connection.$pool.end();
+        return has_ongoing === true;
+    }
+
+    async getRideById(rideId: string): Promise<any> {
+        const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
+        const [output] = await connection.query("select * from ccca.ride where ride_id = $1", [rideId]);
+        await connection.$pool.end();
+        return output;
+    }
+
+    async saveRide(ride: any): Promise<void> {
+        const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
+        await connection.query("insert into ccca.ride (ride_id, passenger_id, status, distance, from_lat, from_long, to_lat, to_long, date) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)", [ride.rideId, ride.passengerId, ride.status, ride.distance, ride.from.lat, ride.from.long, ride.to.lat, ride.to.long, ride.date]);
+        await connection.$pool.end();
+    }
 }

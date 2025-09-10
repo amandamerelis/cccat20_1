@@ -1,14 +1,18 @@
 import {AccountDAO} from "./data";
+import {inject} from "./Registry";
 
 export default class GetAccount {
-    constructor(private readonly database: AccountDAO) {
+    @inject("accountDAO")
+    accountDAO!: AccountDAO;
+
+    constructor() {
     }
 
     async getById(accountId: string) {
-        return await this.database.getAccountById(accountId);
+        return await this.accountDAO.getAccountById(accountId);
     }
 
     async getByEmail(email: string) {
-        return await this.database.getAccountByEmail(email);
+        return await this.accountDAO.getAccountByEmail(email);
     }
 }
