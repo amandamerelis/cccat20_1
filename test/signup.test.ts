@@ -1,15 +1,15 @@
-import {AccountDAODatabase, AccountDAOMemory} from "../src/data";
 import SignUp from "../src/signup";
 import GetAccount from "../src/getAccount";
 import sinon from "sinon";
 import Registry from "../src/Registry";
+import {AccountRepositoryDatabase, AccountRepositoryMemory} from "../src/AccountRepository";
 
 let signup: SignUp;
 let getAccount: GetAccount;
 
 beforeEach(() => {
-    const accountDAO = new AccountDAOMemory();
-    Registry.getInstance().provide("accountDAO", accountDAO);
+    const accountRepository = new AccountRepositoryMemory();
+    Registry.getInstance().provide("accountRepository", accountRepository);
     signup = new SignUp();
     getAccount = new GetAccount();
 });
@@ -112,9 +112,9 @@ test("Deve aprovar o cadastro de passageiro com stub", async function () {
         password: "asdQWE123",
         isPassenger: true
     };
-    const saveAccountStub = sinon.stub(AccountDAODatabase.prototype, "saveAccount").resolves();
-    const getAccountByEmailStub = sinon.stub(AccountDAODatabase.prototype, "getAccountByEmail").resolves();
-    const getAccountByIdStub = sinon.stub(AccountDAODatabase.prototype, "getAccountById").resolves(input);
+    const saveAccountStub = sinon.stub(AccountRepositoryDatabase.prototype, "saveAccount").resolves();
+    const getAccountByEmailStub = sinon.stub(AccountRepositoryDatabase.prototype, "getAccountByEmail").resolves();
+    const getAccountByIdStub = sinon.stub(AccountRepositoryDatabase.prototype, "getAccountById").resolves(input);
     const resultSignup = await signup.execute(input);
     expect(resultSignup.accountId).toBeDefined();
     const resultGetAccount = await getAccount.getById(resultSignup.accountId);
@@ -136,8 +136,8 @@ test("Deve aprovar o cadastro de passageiro com spy", async function () {
         password: "asdQWE123",
         isPassenger: true
     };
-    const saveAccountSpy = sinon.spy(AccountDAOMemory.prototype, "saveAccount");
-    const getAccountSpy = sinon.spy(AccountDAOMemory.prototype, "getAccountById");
+    const saveAccountSpy = sinon.spy(AccountRepositoryMemory.prototype, "saveAccount");
+    const getAccountSpy = sinon.spy(AccountRepositoryMemory.prototype, "getAccountById");
     const resultSignup = await signup.execute(input);
     expect(saveAccountSpy.calledOnce).toBe(true);
     const resultGetAccount = await getAccount.getById(resultSignup.accountId);
@@ -159,7 +159,7 @@ test("Deve aprovar o cadastro de passageiro com mock", async function () {
         password: "asdQWE123",
         isPassenger: true
     };
-    const accountDAOMock = sinon.mock(AccountDAOMemory.prototype);
+    const accountDAOMock = sinon.mock(AccountRepositoryMemory.prototype);
     accountDAOMock.expects("saveAccount").once().resolves();
     accountDAOMock.expects("getAccountByEmail").once().resolves();
     const resultSignup = await signup.execute(input);

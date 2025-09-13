@@ -2,17 +2,18 @@ import SignUp from "../src/signup";
 import RequestRide from "../src/requestRide";
 import GetRide from "../src/getRide";
 import Registry from "../src/Registry";
-import {AccountDAOMemory, RideDAODatabase} from "../src/data";
+import {RideRepositoryDatabase} from "../src/RideRepository";
+import {AccountRepositoryMemory} from "../src/AccountRepository";
 
 let signup: SignUp;
 let requestRide: RequestRide;
 let getRide: GetRide;
 
 beforeEach(() => {
-    const accountDAO = new AccountDAOMemory();
-    const rideDAO = new RideDAODatabase();
-    Registry.getInstance().provide("accountDAO", accountDAO);
-    Registry.getInstance().provide("rideDAO", rideDAO);
+    const accountRepository = new AccountRepositoryMemory();
+    const rideRepository = new RideRepositoryDatabase();
+    Registry.getInstance().provide("accountRepository", accountRepository);
+    Registry.getInstance().provide("rideRepository", rideRepository);
     signup = new SignUp();
     requestRide = new RequestRide();
     getRide = new GetRide();

@@ -1,26 +1,26 @@
-import {SignUpRequest} from "./types/SignUpRequest";
 import express from "express";
-import {AccountDAODatabase, RideDAODatabase} from "./data";
+import {RideRepositoryDatabase} from "./RideRepository";
 import SignUp from "./signup";
 import GetAccount from "./getAccount";
 import GetRide from "./getRide";
 import RequestRide from "./requestRide";
 import Registry from "./Registry";
+import {AccountRepositoryDatabase} from "./AccountRepository";
 
 const app = express();
 app.use(express.json());
 
-const accountDAO = new AccountDAODatabase();
-const rideDAO = new RideDAODatabase();
-Registry.getInstance().provide("accountDAO", accountDAO);
-Registry.getInstance().provide("rideDAO", rideDAO);
+const accountRepository = new AccountRepositoryDatabase();
+const rideRepository = new RideRepositoryDatabase();
+Registry.getInstance().provide("accountRepository", accountRepository);
+Registry.getInstance().provide("rideRepository", rideRepository);
 const signup = new SignUp();
 const getAccount = new GetAccount();
 const requestRide = new RequestRide();
 const getRide = new GetRide();
 
 app.post("/signup", async function (req, res) {
-    const input = req.body as SignUpRequest;
+    const input = req.body;
     try {
         const response = await signup.execute(input);
         res.status(201).json(response);

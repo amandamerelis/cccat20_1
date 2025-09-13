@@ -1,13 +1,13 @@
-import {RideDAO} from "./data";
+import {RideRepository} from "./RideRepository";
 import {inject} from "./Registry";
 
 export default class GetRide {
 
-    @inject("rideDAO")
-    rideDAO!: RideDAO;
+    @inject("rideRepository")
+    rideRepository!: RideRepository;
 
     async getRideById(passengerId: string) {
-        return await this.rideDAO.getRideById(passengerId);
+        return await this.rideRepository.getRideById(passengerId);
     }
 
 }
