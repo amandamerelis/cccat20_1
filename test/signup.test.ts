@@ -3,12 +3,16 @@ import GetAccount from "../src/GetAccount";
 import sinon from "sinon";
 import Registry from "../src/Registry";
 import {AccountRepositoryDatabase, AccountRepositoryMemory} from "../src/AccountRepository";
+import DatabaseConnection, {PgPromiseAdapter} from "../src/DatabaseConnection";
 
+let databaseConnection: DatabaseConnection;
 let signup: Signup;
 let getAccount: GetAccount;
 
 beforeEach(() => {
+    databaseConnection = new PgPromiseAdapter();
     const accountRepository = new AccountRepositoryMemory();
+    Registry.getInstance().provide("databaseConnection", databaseConnection);
     Registry.getInstance().provide("accountRepository", accountRepository);
     signup = new Signup();
     getAccount = new GetAccount();
@@ -171,4 +175,8 @@ test("Deve aprovar o cadastro de passageiro com mock", async function () {
     expect(resultGetAccount.isPassenger).toBe(input.isPassenger);
     expect(resultGetAccount.password).toBe(input.password);
     accountDAOMock.restore();
+});
+
+afterEach(async () => {
+    await databaseConnection.close();
 });

@@ -4,14 +4,18 @@ import GetRide from "../src/GetRide";
 import Registry from "../src/Registry";
 import {RideRepositoryDatabase} from "../src/RideRepository";
 import {AccountRepositoryMemory} from "../src/AccountRepository";
+import DatabaseConnection, {PgPromiseAdapter} from "../src/DatabaseConnection";
 
+let databaseConnection: DatabaseConnection;
 let signup: Signup;
 let requestRide: RequestRide;
 let getRide: GetRide;
 
 beforeEach(() => {
+    databaseConnection = new PgPromiseAdapter();
     const accountRepository = new AccountRepositoryMemory();
     const rideRepository = new RideRepositoryDatabase();
+    Registry.getInstance().provide("databaseConnection", databaseConnection);
     Registry.getInstance().provide("accountRepository", accountRepository);
     Registry.getInstance().provide("rideRepository", rideRepository);
     signup = new Signup();
@@ -121,4 +125,8 @@ test("Deve dar erro ao criar corrida: longitude inválida", async function () {
         toLong: -248.522234807851476
     };
     await expect(() => requestRide.execute(rideInput)).rejects.toThrow(new Error("The longitude is invalid"));
+})
+
+afterEach(async () => {
+    await databaseConnection.close();
 })
