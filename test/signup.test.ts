@@ -1,16 +1,16 @@
-import SignUp from "../src/signup";
-import GetAccount from "../src/getAccount";
+import Signup from "../src/Signup";
+import GetAccount from "../src/GetAccount";
 import sinon from "sinon";
 import Registry from "../src/Registry";
 import {AccountRepositoryDatabase, AccountRepositoryMemory} from "../src/AccountRepository";
 
-let signup: SignUp;
+let signup: Signup;
 let getAccount: GetAccount;
 
 beforeEach(() => {
     const accountRepository = new AccountRepositoryMemory();
     Registry.getInstance().provide("accountRepository", accountRepository);
-    signup = new SignUp();
+    signup = new Signup();
     getAccount = new GetAccount();
 });
 

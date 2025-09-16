@@ -8,7 +8,7 @@ Para rodar o Docker:</br>
 <code>yarn run docker:start</code>
 
 Para rodar a aplicação:<br/>
-<code>npx nodemon src/signup.ts</code>
+<code>npx nodemon src/Signup.ts</code>
 
 Em outro terminal, rode o Jest para os testes:<br/>
 <code>npx jest</code>

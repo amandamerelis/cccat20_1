@@ -2,7 +2,7 @@ import {inject} from "./Registry";
 import Account from "./Account";
 import {AccountRepository} from "./AccountRepository";
 
-export default class SignUp {
+export default class Signup {
 
     @inject("accountRepository")
     accountRepository!: AccountRepository;

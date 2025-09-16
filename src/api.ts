@@ -1,9 +1,9 @@
 import express from "express";
 import {RideRepositoryDatabase} from "./RideRepository";
-import SignUp from "./signup";
-import GetAccount from "./getAccount";
-import GetRide from "./getRide";
-import RequestRide from "./requestRide";
+import Signup from "./Signup";
+import GetAccount from "./GetAccount";
+import GetRide from "./GetRide";
+import RequestRide from "./RequestRide";
 import Registry from "./Registry";
 import {AccountRepositoryDatabase} from "./AccountRepository";
 
@@ -14,7 +14,7 @@ const accountRepository = new AccountRepositoryDatabase();
 const rideRepository = new RideRepositoryDatabase();
 Registry.getInstance().provide("accountRepository", accountRepository);
 Registry.getInstance().provide("rideRepository", rideRepository);
-const signup = new SignUp();
+const signup = new Signup();
 const getAccount = new GetAccount();
 const requestRide = new RequestRide();
 const getRide = new GetRide();

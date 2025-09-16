@@ -13,12 +13,12 @@ test("Deve criar conta de motorista", async function (){
         true);
     await accountRepository.saveAccount(input);
     const accountByEmail = await accountRepository.getAccountByEmail(input.email);
-    expect(accountByEmail.account_id).toBeDefined();
+    expect(accountByEmail.accountId).toBeDefined();
     expect(accountByEmail.name).toBe(input.name);
     expect(accountByEmail.email).toBe(input.email);
     expect(accountByEmail.cpf).toBe(input.cpf);
     const accountById = await accountRepository.getAccountById(input.accountId);
     expect(accountById.password).toBe(input.password);
-    expect(accountById.is_driver).toBe(input.isDriver);
-    expect(accountById.car_plate).toBe(input.carPlate);
+    expect(accountById.isDriver).toBe(input.isDriver);
+    expect(accountById.carPlate).toBe(input.carPlate);
 });
