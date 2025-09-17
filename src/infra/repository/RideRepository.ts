@@ -1,6 +1,6 @@
-import Ride from "./Ride";
-import {inject} from "./Registry";
-import DatabaseConnection from "./DatabaseConnection";
+import Ride from "../../domain/Ride";
+import {inject} from "../di/Registry";
+import DatabaseConnection from "../database/DatabaseConnection";
 
 export interface RideRepository {
     existsOngoingRideForPassenger: (passengerId: string) => Promise<boolean>;

@@ -1,7 +1,7 @@
-import {inject} from "./Registry";
-import HttpServer from "./HttpServer";
-import RequestRide from "./RequestRide";
-import GetRide from "./GetRide";
+import {inject} from "../di/Registry";
+import HttpServer from "../http/HttpServer";
+import RequestRide from "../../application/usecase/RequestRide";
+import GetRide from "../../application/usecase/GetRide";
 
 export default class RideController {
     @inject("httpServer")

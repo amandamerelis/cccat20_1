@@ -1,5 +1,5 @@
-import {RideRepository} from "./RideRepository";
-import {inject} from "./Registry";
+import {RideRepository} from "../../infra/repository/RideRepository";
+import {inject} from "../../infra/di/Registry";
 
 export default class GetRide {
 

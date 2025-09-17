@@ -1,7 +1,7 @@
-import {AccountRepositoryDatabase} from "../src/AccountRepository";
-import Account from "../src/Account";
-import {PgPromiseAdapter} from "../src/DatabaseConnection";
-import Registry from "../src/Registry";
+import {AccountRepositoryDatabase} from "../../src/infra/repository/AccountRepository";
+import Account from "../../src/domain/Account";
+import {PgPromiseAdapter} from "../../src/infra/database/DatabaseConnection";
+import Registry from "../../src/infra/di/Registry";
 
 test("Deve criar conta de motorista", async function (){
     const databaseConnection = new PgPromiseAdapter();

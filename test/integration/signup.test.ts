@@ -1,9 +1,9 @@
-import Signup from "../src/Signup";
-import GetAccount from "../src/GetAccount";
+import Signup from "../../src/application/usecase/Signup";
+import GetAccount from "../../src/application/usecase/GetAccount";
 import sinon from "sinon";
-import Registry from "../src/Registry";
-import {AccountRepositoryDatabase, AccountRepositoryMemory} from "../src/AccountRepository";
-import DatabaseConnection, {PgPromiseAdapter} from "../src/DatabaseConnection";
+import Registry from "../../src/infra/di/Registry";
+import {AccountRepositoryDatabase, AccountRepositoryMemory} from "../../src/infra/repository/AccountRepository";
+import DatabaseConnection, {PgPromiseAdapter} from "../../src/infra/database/DatabaseConnection";
 
 let databaseConnection: DatabaseConnection;
 let signup: Signup;

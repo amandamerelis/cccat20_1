@@ -1,10 +1,10 @@
-import Signup from "../src/Signup";
-import RequestRide from "../src/RequestRide";
-import GetRide from "../src/GetRide";
-import Registry from "../src/Registry";
-import {RideRepositoryDatabase} from "../src/RideRepository";
-import {AccountRepositoryMemory} from "../src/AccountRepository";
-import DatabaseConnection, {PgPromiseAdapter} from "../src/DatabaseConnection";
+import Signup from "../../src/application/usecase/Signup";
+import RequestRide from "../../src/application/usecase/RequestRide";
+import GetRide from "../../src/application/usecase/GetRide";
+import Registry from "../../src/infra/di/Registry";
+import {RideRepositoryDatabase} from "../../src/infra/repository/RideRepository";
+import {AccountRepositoryMemory} from "../../src/infra/repository/AccountRepository";
+import DatabaseConnection, {PgPromiseAdapter} from "../../src/infra/database/DatabaseConnection";
 
 let databaseConnection: DatabaseConnection;
 let signup: Signup;

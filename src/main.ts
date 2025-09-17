@@ -1,14 +1,14 @@
-import {RideRepositoryDatabase} from "./RideRepository";
-import Signup from "./Signup";
-import GetAccount from "./GetAccount";
-import GetRide from "./GetRide";
-import RequestRide from "./RequestRide";
-import Registry from "./Registry";
-import {AccountRepositoryDatabase} from "./AccountRepository";
-import {PgPromiseAdapter} from "./DatabaseConnection";
-import {ExpressAdapter} from "./HttpServer";
-import AccountController from "./AccountController";
-import RideController from "./RideController";
+import {RideRepositoryDatabase} from "./infra/repository/RideRepository";
+import Signup from "./application/usecase/Signup";
+import GetAccount from "./application/usecase/GetAccount";
+import GetRide from "./application/usecase/GetRide";
+import RequestRide from "./application/usecase/RequestRide";
+import Registry from "./infra/di/Registry";
+import {AccountRepositoryDatabase} from "./infra/repository/AccountRepository";
+import {PgPromiseAdapter} from "./infra/database/DatabaseConnection";
+import {ExpressAdapter} from "./infra/http/HttpServer";
+import AccountController from "./infra/controller/AccountController";
+import RideController from "./infra/controller/RideController";
 
 const databaseConnection = new PgPromiseAdapter();
 Registry.getInstance().provide("databaseConnection", databaseConnection);

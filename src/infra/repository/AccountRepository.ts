@@ -1,6 +1,6 @@
-import Account from "./Account";
-import {inject} from "./Registry";
-import DatabaseConnection from "./DatabaseConnection";
+import Account from "../../domain/Account";
+import {inject} from "../di/Registry";
+import DatabaseConnection from "../database/DatabaseConnection";
 
 export interface AccountRepository {
     getAccountByEmail: (email: string) => Promise<Account>;
