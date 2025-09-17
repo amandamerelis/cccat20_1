@@ -1,7 +1,11 @@
 import {AccountRepositoryDatabase} from "../src/AccountRepository";
 import Account from "../src/Account";
+import {PgPromiseAdapter} from "../src/DatabaseConnection";
+import Registry from "../src/Registry";
 
 test("Deve criar conta de motorista", async function (){
+    const databaseConnection = new PgPromiseAdapter();
+    Registry.getInstance().provide("databaseConnection", databaseConnection);
     const accountRepository = new AccountRepositoryDatabase();
     const input = Account.create(
         "Jane Doe",
