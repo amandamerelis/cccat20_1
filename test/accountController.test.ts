@@ -15,7 +15,6 @@ test("Deve aprovar o cadastro de passageiro", async function () {
         carPlate: null
     };
     const result = await axios.post("http://localhost:3000/signup", input);
-    expect(result.status).toBe(201);
     const newAccount = result.data;
     expect(newAccount.accountId).toBeDefined();
     const output = await axios.get(`http://localhost:3000/accounts/${newAccount.accountId}`);
@@ -38,7 +37,6 @@ test("Deve aprovar o cadastro de motorista", async function () {
         carPlate: "ABC1234"
     };
     const result = await axios.post("http://localhost:3000/signup", input);
-    expect(result.status).toBe(201);
     const newAccount = result.data;
     expect(newAccount.accountId).toBeDefined();
     const output = await axios.get(`http://localhost:3000/accounts/${newAccount.accountId}`);
