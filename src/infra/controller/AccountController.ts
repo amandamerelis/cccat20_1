@@ -13,13 +13,12 @@ export default class AccountController {
 
     constructor() {
         this.httpServer.register("post", "/signup", async (params: any, body: any) => {
-            const input = body;
-            return await this.signup.execute(input);
+            return await this.signup.execute(body);
         });
 
         this.httpServer.register("get", "/accounts/:accountId", async (params: any, body: any) => {
             const accountId = params.accountId;
-            return await this.getAccount.getById(accountId);
+            return await this.getAccount.execute(accountId);
         });
     }
 }

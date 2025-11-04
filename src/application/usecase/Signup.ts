@@ -10,13 +10,13 @@ export default class Signup {
     constructor() {
     }
 
-    async execute(input: any) {
-        const newAccount = Account.create(input.name, input.email, input.cpf, input.password, input.carPlate, input.isPassenger, input.isDriver);
-        const existingAccount = await this.accountRepository.getAccountByEmail(input.email);
+    async execute(input: Input): Promise<Output> {
+        const newAccount = Account.create(input.name, input.email, input.cpf, input.password, input.isPassenger, input.isDriver, input.carPlate);
+        const existingAccount = await this.accountRepository.getAccountByEmail(newAccount.getEmail());
         if (existingAccount) throw new Error("Account already exists");
         await this.accountRepository.saveAccount(newAccount);
         return {
-            accountId: newAccount.accountId
+            accountId: newAccount.getAccountId()
         };
     }
 }
@@ -26,8 +26,12 @@ type Input = {
     email: string,
     cpf: string,
     password: string,
-    carPlate: string,
     isPassenger: boolean,
     isDriver: boolean,
+    carPlate: string,
+}
+
+type Output = {
+    accountId: string,
 }
 

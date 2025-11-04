@@ -1,22 +1,32 @@
+import Uuid from "./vo/Uuid";
+import Coordenate from "./vo/Coordenate";
+
 export default class Ride {
 
+    private rideId: Uuid;
+    private passengerId: Uuid;
+    private driverId?: Uuid;
+    private fromCoordinate: Coordenate;
+    private toCoordinate: Coordenate;
+
     constructor(
-        readonly rideId: string,
-        readonly passengerId: string,
-        readonly driverId: string | null,
-        readonly fromLat: number,
-        readonly fromLong: number,
-        readonly toLat: number,
-        readonly toLong: number,
-        readonly distance: number,
-        readonly fare: number,
-        readonly status: string,
+        rideId: string,
+        passengerId: string,
+        driverId: string | null,
+        fromLat: number,
+        fromLong: number,
+        toLat: number,
+        toLong: number,
+        private distance: number,
+        private fare: number,
+        private status: string,
         readonly date: Date,
     ) {
-        if(fromLat < -90 || fromLat > 90) throw new Error("The latitude is invalid");
-        if(toLat < -90 || toLat > 90) throw new Error("The latitude is invalid");
-        if(fromLong < -180 || fromLong > 180) throw new Error("The longitude is invalid");
-        if(toLong < -180 || toLong > 180) throw new Error("The longitude is invalid");
+        this.rideId = new Uuid(rideId);
+        this.passengerId = new Uuid(passengerId);
+        if (driverId) this.driverId = new Uuid(driverId);
+        this.fromCoordinate = new Coordenate(fromLat, fromLong);
+        this.toCoordinate = new Coordenate(toLat, toLong);
     }
 
     static create(passengerId: string,
@@ -24,7 +34,7 @@ export default class Ride {
                   fromLong: number,
                   toLat: number,
                   toLong: number) {
-        const rideId = crypto.randomUUID();
+        const rideId = Uuid.create().getValue();
         const status = "requested";
         const date = new Date();
         const distance = 0;
@@ -35,12 +45,12 @@ export default class Ride {
     calculateDistance() {
         const earthRadius = 6371;
         const degreesToRadians = Math.PI / 180;
-        const deltaLat = (this.toLat - this.fromLat) * degreesToRadians;
-        const deltaLon = (this.toLong - this.fromLong) * degreesToRadians;
+        const deltaLat = (this.toCoordinate.getLatitude() - this.fromCoordinate.getLatitude()) * degreesToRadians;
+        const deltaLon = (this.toCoordinate.getLongitude() - this.fromCoordinate.getLongitude()) * degreesToRadians;
         const a =
             Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-            Math.cos(this.fromLat * degreesToRadians) *
-            Math.cos(this.toLat * degreesToRadians) *
+            Math.cos(this.fromCoordinate.getLatitude() * degreesToRadians) *
+            Math.cos(this.toCoordinate.getLatitude() * degreesToRadians) *
             Math.sin(deltaLon / 2) *
             Math.sin(deltaLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
@@ -51,6 +61,54 @@ export default class Ride {
     calculateFare() {
         const distance = this.calculateDistance();
         return distance * 2.1;
+    }
+
+    getRideId() {
+        return this.rideId.getValue();
+    }
+
+    getFromCoordinate() {
+        return this.fromCoordinate;
+    }
+
+    getToCoordinate() {
+        return this.toCoordinate;
+    }
+
+    getPassengerId() {
+        return this.passengerId.getValue();
+    }
+
+    getStatus() {
+        return this.status;
+    }
+
+    setStatus(status: string) {
+        this.status = status;
+    }
+
+    getDistance() {
+        return this.distance;
+    }
+
+    setDistance(distance: number) {
+        this.distance = distance;
+    }
+
+    getFare() {
+        return this.fare;
+    }
+
+    setFare(fare: number) {
+        this.fare = fare;
+    }
+
+    getDriverId() {
+        return this.driverId?.getValue();
+    }
+
+    setDriverId(driverId: string) {
+        this.driverId = new Uuid(driverId);
     }
 
 }

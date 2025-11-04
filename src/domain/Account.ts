@@ -1,45 +1,69 @@
-import {validateCpf} from "./validateCpf";
-import {validatePassword} from "./validatePassword";
+import Name from "./vo/Name";
+import Email from "./vo/Email";
+import Cpf from "./vo/Cpf";
+import Password from "./vo/Password";
+import CarPlate from "./vo/CarPlate";
+import Uuid from "./vo/Uuid";
 
 export default class Account {
 
-    constructor(
-        readonly accountId: string,
-        readonly name: string,
-        readonly email: string,
-        readonly cpf: string,
-        readonly password: string,
-        readonly carPlate: string,
+    private accountId: Uuid;
+    private name: Name;
+    private email: Email;
+    private cpf: Cpf;
+    private password: Password;
+    private carPlate?: CarPlate;
+
+    constructor (
+        accountId: string,
+        name: string,
+        email: string,
+        cpf: string,
+        password: string,
         readonly isPassenger: boolean,
         readonly isDriver: boolean,
+        carPlate: string,
     ) {
-        if (!this.validateName(name)) throw new Error("Invalid name");
-        if (!this.validateEmail(email)) throw new Error("Invalid email");
-        if (!validateCpf(cpf)) throw new Error("Invalid CPF");
-        if (!validatePassword(password)) throw new Error("Invalid password");
-        if (this.validateCarPlate(isDriver, carPlate)) throw new Error("Invalid car plate");
-    }
-
-    validateName(name: string) {
-        return name.match(/[a-zA-Z] [a-zA-Z]+/);
-    }
-
-    validateEmail(email: string) {
-        return email.match(/^(.+)@(.+)$/);
-    }
-
-    validateCarPlate(isDriver: boolean, carPlate: string) {
-        return isDriver && !(carPlate?.match(/[A-Z]{3}[0-9]{4}/));
+        this.accountId = new Uuid(accountId);
+        this.name = new Name(name);
+        this.email = new Email(email);
+        this.cpf = new Cpf(cpf);
+        if (isDriver) this.carPlate = new CarPlate(carPlate);
+        this.password = new Password(password);
     }
 
     static create(name: string,
                   email: string,
                   cpf: string,
                   password: string,
-                  carPlate: string,
                   isPassenger: boolean,
-                  isDriver: boolean) {
-        const accountId = crypto.randomUUID();
-        return new Account(accountId, name, email, cpf, password, carPlate, isPassenger, isDriver);
+                  isDriver: boolean,
+                  carPlate: string,) {
+        const accountId = Uuid.create().getValue();
+        return new Account(accountId, name, email, cpf, password, isPassenger, isDriver, carPlate);
+    }
+
+    getName() {
+        return this.name.getValue();
+    }
+
+    getEmail() {
+        return this.email.getValue();
+    }
+
+    getCpf() {
+        return this.cpf.getValue();
+    }
+
+    getPassword() {
+        return this.password.getValue();
+    }
+
+    getCarPlate() {
+        return this.carPlate?.getValue();
+    }
+
+    getAccountId() {
+        return this.accountId.getValue();
     }
 }

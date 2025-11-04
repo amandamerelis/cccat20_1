@@ -29,19 +29,22 @@ test("Deve criar a corrida", async function () {
         email: `janedoe${Math.random()}@gmail.com`,
         cpf: "97456321558",
         password: "asdQWE123",
-        isPassenger: true
+        isPassenger: true,
+        isDriver: false,
+        carPlate: ""
     }
     const savePassengerResult = await signup.execute(passenger);
     const rideInput = {
         passengerId: savePassengerResult.accountId,
+        driverId: null,
         fromLat: -27.584905257808835,
         fromLong: -48.545022195325124,
         toLat: -27.496887588317275,
         toLong: -48.522234807851476
     };
     const saveRideResult = await requestRide.execute(rideInput);
-    expect(saveRideResult.rideId).toBeDefined();
-    const outputGetRide = await getRide.getRideById(saveRideResult.rideId);
+    expect(saveRideResult.getRideId()).toBeDefined();
+    const outputGetRide = await getRide.getRideById(saveRideResult.getRideId());
     expect(outputGetRide.status).toBe("requested");
     expect(outputGetRide.fromLat).toBe(rideInput.fromLat);
     expect(outputGetRide.fromLong).toBe(rideInput.fromLong);
@@ -56,7 +59,9 @@ test("Deve dar erro ao criar corrida: usuário não é passageiro", async functi
         email: `janedoe${Math.random()}@gmail.com`,
         cpf: "97456321558",
         password: "asdQWE123",
-        isPassenger: false
+        isPassenger: false,
+        isDriver: false,
+        carPlate: ""
     }
     const savePassengerResult = await signup.execute(passenger);
     const rideInput = {
@@ -75,7 +80,9 @@ test("Deve dar erro ao criar corrida: usuário possui corrida em andamento", asy
         email: `janedoe${Math.random()}@gmail.com`,
         cpf: "97456321558",
         password: "asdQWE123",
-        isPassenger: true
+        isPassenger: true,
+        isDriver: false,
+        carPlate: ""
     }
     const savePassengerResult = await signup.execute(passenger);
     const rideInput = {
@@ -95,7 +102,9 @@ test("Deve dar erro ao criar corrida: latitude inválida", async function () {
         email: `janedoe${Math.random()}@gmail.com`,
         cpf: "97456321558",
         password: "asdQWE123",
-        isPassenger: true
+        isPassenger: true,
+        isDriver: false,
+        carPlate: ""
     }
     const savePassengerResult = await signup.execute(passenger);
     const rideInput = {
@@ -114,7 +123,9 @@ test("Deve dar erro ao criar corrida: longitude inválida", async function () {
         email: `janedoe${Math.random()}@gmail.com`,
         cpf: "97456321558",
         password: "asdQWE123",
-        isPassenger: true
+        isPassenger: true,
+        isDriver: false,
+        carPlate: ""
     }
     const savePassengerResult = await signup.execute(passenger);
     const rideInput = {

@@ -12,17 +12,18 @@ test("Deve criar conta de motorista", async function (){
         `janedoe${Math.random()}@gmail.com`,
         "97456321558",
         "asdQWE123",
-        "ABC1234",
         false,
-        true);
+        true,
+        "ABC1234");
     await accountRepository.saveAccount(input);
-    const accountByEmail = await accountRepository.getAccountByEmail(input.email);
-    expect(accountByEmail.accountId).toBeDefined();
-    expect(accountByEmail.name).toBe(input.name);
-    expect(accountByEmail.email).toBe(input.email);
-    expect(accountByEmail.cpf).toBe(input.cpf);
-    const accountById = await accountRepository.getAccountById(input.accountId);
-    expect(accountById.password).toBe(input.password);
-    expect(accountById.isDriver).toBe(input.isDriver);
-    expect(accountById.carPlate).toBe(input.carPlate);
+    const accountByEmail = await accountRepository.getAccountByEmail(input.getEmail());
+    expect(accountByEmail).toBeDefined();
+    expect(accountByEmail?.getAccountId()).toBeDefined();
+    expect(accountByEmail?.getName()).toBe(input.getName());
+    expect(accountByEmail?.getEmail()).toBe(input.getEmail());
+    expect(accountByEmail?.getCpf()).toBe(input.getCpf());
+    const accountById = await accountRepository.getAccountById(input.getAccountId());
+    expect(accountById?.getPassword()).toBe(input.getPassword());
+    expect(accountById?.isDriver).toBe(input.isDriver);
+    expect(accountById?.getCarPlate()).toBe(input.getCarPlate());
 });

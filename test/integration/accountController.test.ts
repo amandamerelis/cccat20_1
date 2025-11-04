@@ -12,7 +12,6 @@ test("Deve aprovar o cadastro de passageiro", async function () {
         password: "asdQWE123",
         isPassenger: true,
         isDriver: false,
-        carPlate: null
     };
     const result = await axios.post("http://localhost:3000/signup", input);
     const newAccount = result.data;

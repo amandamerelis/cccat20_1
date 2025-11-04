@@ -18,7 +18,7 @@ export default class RequestRide {
         const passenger = await this.accountRepository.getAccountById(input.passengerId);
         if (!passenger) throw new Error("Passenger not found");
         if (!passenger.isPassenger) throw new Error("User is not a passenger");
-        const ongoingRide = await this.rideRepository.existsOngoingRideForPassenger(passenger.accountId);
+        const ongoingRide = await this.rideRepository.existsOngoingRideForPassenger(passenger.getAccountId());
         if (ongoingRide) {
             throw new Error("Passenger already has a ride in progress");
         }
