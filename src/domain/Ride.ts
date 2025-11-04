@@ -111,4 +111,14 @@ export default class Ride {
         this.driverId = new Uuid(driverId);
     }
 
+    accept(driverId: string){
+        if (this.status !== "requested") throw new Error("Invalid status");
+        this.driverId = new Uuid(driverId);
+        this.status = "accepted";
+    }
+
+    start(){
+        if (this.status !== "accepted") throw new Error("Invalid status");
+        this.status = "in_progress";
+    }
 }

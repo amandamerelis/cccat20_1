@@ -8,6 +8,7 @@ export default class GetRide {
 
     async getRideById(passengerId: string): Promise<Output> {
         const ride = await this.rideRepository.getRideById(passengerId);
+        if (!ride) throw new Error("Ride not found");
         return {
             rideId: ride.getRideId(),
             passengerId: ride.getPassengerId(),

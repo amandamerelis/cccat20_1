@@ -4,8 +4,9 @@ import DatabaseConnection from "../database/DatabaseConnection";
 
 export interface RideRepository {
     existsOngoingRideForPassenger: (passengerId: string) => Promise<boolean>;
-    getRideById: (rideId: string) => Promise<Ride>;
+    getRideById: (rideId: string) => Promise<Ride | null>;
     saveRide: (ride: any) => Promise<void>;
+    updateRide: (ride: any) => Promise<void>;
 }
 
 export class RideRepositoryDatabase implements RideRepository {
@@ -21,8 +22,9 @@ export class RideRepositoryDatabase implements RideRepository {
         return !!has_ongoing;
     }
 
-    async getRideById(rideId: string): Promise<Ride> {
+    async getRideById(rideId: string): Promise<Ride | null> {
         const [output] = await this.connection.query("select * from ccca.ride where ride_id = $1", [rideId]);
+        if(!output) return null;
         return new Ride(
             output.ride_id,
             output.passenger_id,
@@ -41,5 +43,9 @@ export class RideRepositoryDatabase implements RideRepository {
     async saveRide(ride: Ride): Promise<void> {
         await this.connection.query("insert into ccca.ride (ride_id, passenger_id, status, distance, from_lat, from_long, to_lat, to_long, date) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)", [ride.getRideId(), ride.getPassengerId(),
             ride.getStatus(), ride.getDistance(), ride.getFromCoordinate().getLatitude(), ride.getFromCoordinate().getLongitude(), ride.getToCoordinate().getLatitude(), ride.getToCoordinate().getLongitude(), ride.date]);
+    }
+
+    async updateRide(ride: Ride): Promise<void> {
+        await this.connection.query("update ccca.ride set driver_id = $1, status = $2, fare = $3, distance = $4 where ride_id = $5", [ride.getDriverId(), ride.getStatus(), ride.getFare(), ride.getDistance(), ride.getRideId()]);
     }
 }
